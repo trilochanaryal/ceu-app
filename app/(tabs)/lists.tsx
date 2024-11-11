@@ -1,12 +1,12 @@
 import SafeAreaScrollableView from '@/components/safe-area-scrollable-view';
 import { Text } from 'react-native';
 
-const SignUp = () => {
+const Lists = () => {
   return (
     <SafeAreaScrollableView>
-      <Text>Sign Up page</Text>
+      <Text>Lists</Text>
     </SafeAreaScrollableView>
   );
 };
 
-export default SignUp;
+export default Lists;

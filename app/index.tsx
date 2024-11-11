@@ -1,12 +1,13 @@
-import { Link } from 'expo-router';
-import { View } from 'react-native';
+import { Redirect } from 'expo-router';
 
 function Home() {
-  return (
-    <View>
-      <Link href="/create-document">Create Document</Link>
-    </View>
-  );
+  const isLoggedIn = true;
+
+  if (isLoggedIn) {
+    return <Redirect href="/lists" />;
+  } else {
+    return <Redirect href="/(auth)/sign-in" />;
+  }
 }
 
 export default Home;
