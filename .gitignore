@@ -18,3 +18,7 @@ web-build/
 
 expo-env.d.ts
 # @end expo-cli
+
+#pre build folders
+android
+ios

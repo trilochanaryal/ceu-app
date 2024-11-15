@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@babel/runtime':
+        specifier: ^7.26.0
+        version: 7.26.0
       '@expo/vector-icons':
         specifier: ^14.0.2
         version: 14.0.4
@@ -15,8 +18,11 @@ importers:
         specifier: ^6.0.2
         version: 6.1.18(react-native@0.74.5(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.2.79)(react@18.2.0))(react@18.2.0)
       expo:
-        specifier: ~51.0.28
+        specifier: ~51.0.38
         version: 51.0.38(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))
+      expo-camera:
+        specifier: ^16.0.5
+        version: 16.0.5(expo@51.0.38(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0)))(react-native-web@0.19.13(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-native@0.74.5(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.2.79)(react@18.2.0))(react@18.2.0)
       expo-constants:
         specifier: ~16.0.2
         version: 16.0.2(expo@51.0.38(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0)))
@@ -30,7 +36,7 @@ importers:
         specifier: ~3.5.23
         version: 3.5.23(hlm4dvi52oqwlgil4l5a6hc3zu)
       expo-splash-screen:
-        specifier: ~0.27.5
+        specifier: ~0.27.6
         version: 0.27.6(expo-modules-autolinking@1.11.3)(expo@51.0.38(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0)))
       expo-status-bar:
         specifier: ~1.12.1
@@ -2528,6 +2534,17 @@ packages:
     resolution: {integrity: sha512-0qoTIihB79k+wGus9wy0JMKq7DdenziVx3iUkGvMAy2azscSgWH6bd2gJ9CGnhC6JRd3qTMFBL0ou/fx7WZl7A==}
     peerDependencies:
       expo: '*'
+
+  expo-camera@16.0.5:
+    resolution: {integrity: sha512-GmsqBl+to5oEy01kUXu2Ul5Z38ugSLlA7sd3f+2PVJHNFv1Gou0nbkGTx6k5JZrSiP/vxuP6QKPIg8rIJoeWGA==}
+    peerDependencies:
+      expo: '*'
+      react: '*'
+      react-native: '*'
+      react-native-web: '*'
+    peerDependenciesMeta:
+      react-native-web:
+        optional: true
 
   expo-constants@16.0.2:
     resolution: {integrity: sha512-9tNY3OVO0jfiMzl7ngb6IOyR5VFzNoN5OOazUWoeGfmMqVB5kltTemRvKraK9JRbBKIw+SOYLEmF0sEqgFZ6OQ==}
@@ -8754,6 +8771,15 @@ snapshots:
       md5-file: 3.2.3
     transitivePeerDependencies:
       - supports-color
+
+  expo-camera@16.0.5(expo@51.0.38(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0)))(react-native-web@0.19.13(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-native@0.74.5(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.2.79)(react@18.2.0))(react@18.2.0):
+    dependencies:
+      expo: 51.0.38(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))
+      invariant: 2.2.4
+      react: 18.2.0
+      react-native: 0.74.5(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.2.79)(react@18.2.0)
+    optionalDependencies:
+      react-native-web: 0.19.13(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
 
   expo-constants@16.0.2(expo@51.0.38(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))):
     dependencies:
