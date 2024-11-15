@@ -1,10 +1,10 @@
-import { Text } from 'react-native';
 import SafeAreaScrollableView from '@/components/safe-area-scrollable-view';
+import DocumentForm from '@/components/document-form';
 
 const Create = () => {
   return (
     <SafeAreaScrollableView>
-      <Text>Create</Text>
+      <DocumentForm />
     </SafeAreaScrollableView>
   );
 };
