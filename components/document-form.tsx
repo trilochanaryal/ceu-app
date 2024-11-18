@@ -1,12 +1,8 @@
-import { Text, View, StyleSheet, Button, TextInput, TouchableOpacity } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
+import { RadioButton, TextInput, Button, Text } from 'react-native-paper';
 import LocationScanner from './location-scanner';
-
-export type DocumentFormData = {
-  location: string;
-  noOfEmployee: string;
-  company: string;
-};
+import type { DocumentFormData } from '../types/form';
 
 const DocumentForm = () => {
   const {
@@ -20,6 +16,11 @@ const DocumentForm = () => {
       location: '',
       noOfEmployee: '',
       company: '',
+      reportingDate: '',
+      dailyWorkingHours: '',
+      noOfMaleWorkers: '',
+      totalWorkers: '',
+      observation: '',
     },
   });
 
@@ -29,7 +30,7 @@ const DocumentForm = () => {
 
   return (
     <View style={styles.container}>
-      <Text>Document Form</Text>
+      <Text variant="titleLarge">Document Form</Text>
 
       <LocationScanner control={control} setValue={setValue} errors={errors} location={location} />
 
@@ -49,36 +50,153 @@ const DocumentForm = () => {
             placeholder="Number of employees on site"
             value={value}
             keyboardType="numeric"
-            style={styles.input}
           />
         )}
         name="noOfEmployee"
       />
       {errors.noOfEmployee && <Text style={styles.errorText}>{errors.noOfEmployee.message}</Text>}
 
-      <View style={styles.radioGroup}>
-        <Text>Select Company</Text>
-        <Controller
-          control={control}
-          name="company"
-          render={({ field: { value, onChange } }) => (
-            <>
-              <TouchableOpacity
-                style={[styles.radioItem, value === 'UNOPS' && styles.selectedRadio]}
-                onPress={() => onChange('UNOPS')}>
-                <Text>UNOPS</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.radioItem, value === 'Contractor' && styles.selectedRadio]}
-                onPress={() => onChange('Contractor')}>
-                <Text>Contractor</Text>
-              </TouchableOpacity>
-            </>
-          )}
-        />
-      </View>
+      <Controller
+        control={control}
+        rules={{
+          required: 'Company is required',
+        }}
+        render={({ field: { value, onChange } }) => (
+          <View>
+            <Text>Select Company</Text>
+            <View style={styles.radioGroup}>
+              <RadioButton
+                value="UNOPS"
+                status={value === 'UNOPS' ? 'checked' : 'unchecked'}
+                onPress={() => onChange('UNOPS')}
+              />
+              <Text>UNOPS</Text>
+              <RadioButton
+                value="Contractor"
+                status={value === 'Contractor' ? 'checked' : 'unchecked'}
+                onPress={() => onChange('Contractor')}
+              />
+              <Text>Contractor</Text>
+            </View>
+          </View>
+        )}
+        name="company"
+      />
+      {errors.company && <Text style={styles.errorText}>{errors.company.message}</Text>}
 
-      <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+      <Controller
+        control={control}
+        rules={{
+          required: 'Reporting date is required',
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            onBlur={onBlur}
+            onChangeText={onChange}
+            placeholder="Reporting Date"
+            value={value}
+          />
+        )}
+        name="reportingDate"
+      />
+      {errors.reportingDate && <Text style={styles.errorText}>{errors.reportingDate.message}</Text>}
+
+      <Controller
+        control={control}
+        rules={{
+          required: 'Daily working hours are required',
+          pattern: {
+            value: /^[0-9]*$/,
+            message: 'Only numbers are allowed',
+          },
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            onBlur={onBlur}
+            onChangeText={onChange}
+            placeholder="Daily Working Hours"
+            value={value}
+            keyboardType="numeric"
+          />
+        )}
+        name="dailyWorkingHours"
+      />
+      {errors.dailyWorkingHours && (
+        <Text style={styles.errorText}>{errors.dailyWorkingHours.message}</Text>
+      )}
+
+      <Controller
+        control={control}
+        rules={{
+          required: 'Number of male workers is required',
+          pattern: {
+            value: /^[0-9]*$/,
+            message: 'Only numbers are allowed',
+          },
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            onBlur={onBlur}
+            onChangeText={onChange}
+            placeholder="Number of Male Workers"
+            value={value}
+            keyboardType="numeric"
+          />
+        )}
+        name="noOfMaleWorkers"
+      />
+      {errors.noOfMaleWorkers && (
+        <Text style={styles.errorText}>{errors.noOfMaleWorkers.message}</Text>
+      )}
+
+      <Controller
+        control={control}
+        rules={{
+          required: 'Total number of workers is required',
+          pattern: {
+            value: /^[0-9]*$/,
+            message: 'Only numbers are allowed',
+          },
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            onBlur={onBlur}
+            onChangeText={onChange}
+            placeholder="Total Workers"
+            value={value}
+            keyboardType="numeric"
+          />
+        )}
+        name="totalWorkers"
+      />
+      {errors.totalWorkers && <Text style={styles.errorText}>{errors.totalWorkers.message}</Text>}
+
+      <Controller
+        control={control}
+        render={({ field: { value, onChange } }) => (
+          <View>
+            <Text>Observation</Text>
+            <View style={styles.radioGroup}>
+              <RadioButton
+                value="Satisfactory"
+                status={value === 'Satisfactory' ? 'checked' : 'unchecked'}
+                onPress={() => onChange('Satisfactory')}
+              />
+              <Text>Satisfactory</Text>
+              <RadioButton
+                value="Needs Improvement"
+                status={value === 'Needs Improvement' ? 'checked' : 'unchecked'}
+                onPress={() => onChange('Needs Improvement')}
+              />
+              <Text>Needs Improvement</Text>
+            </View>
+          </View>
+        )}
+        name="observation"
+      />
+      {errors.observation && <Text style={styles.errorText}>{errors.observation.message}</Text>}
+
+      <Button onPress={handleSubmit(onSubmit)}>Submit</Button>
     </View>
   );
 };
@@ -90,24 +208,10 @@ const styles = StyleSheet.create({
     gap: 6,
     padding: 16,
   },
-  input: {
-    borderWidth: 2,
-    borderColor: '#333',
-    borderRadius: 8,
-    padding: 10,
-    marginTop: 10,
-  },
   radioGroup: {
-    marginTop: 10,
-  },
-  radioItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
-  },
-  selectedRadio: {
-    backgroundColor: '#ddd', // Highlight selected option
-    borderRadius: 4,
+    marginVertical: 10,
   },
   errorText: {
     color: 'red',

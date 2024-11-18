@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useState } from 'react';
 import type { Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
-import type { DocumentFormData } from './document-form';
+import { Button, TextInput } from 'react-native-paper';
+import type { DocumentFormData } from '../types/form';
 
 type Props = {
   control: Control<DocumentFormData>;
@@ -18,8 +19,6 @@ const LocationScanner = ({ control, setValue, errors, location }: Props) => {
   const [cameraVisible, setCameraVisible] = useState(false);
   const isPermissionGranted = Boolean(permission?.granted);
 
-  console.log(errors);
-
   if (!permission) {
     return <View />;
   }
@@ -27,38 +26,40 @@ const LocationScanner = ({ control, setValue, errors, location }: Props) => {
   return (
     <>
       {isPermissionGranted && !location && (
-        <Button title="Get Location" onPress={() => setCameraVisible(true)} />
+        <Button onPress={() => setCameraVisible(true)}>Get Location</Button>
       )}
 
       {isPermissionGranted && location && (
-        <Button title="Change Location" onPress={() => setCameraVisible(true)} />
+        <Button onPress={() => setCameraVisible(true)}>Change Location</Button>
       )}
 
       {!isPermissionGranted && (
         <View style={styles.permissionView}>
           <Text>Camera permission is required</Text>
-          <Button title="Grant Permission" onPress={requestPermission} />
+          <Button onPress={requestPermission}>Grant Permission</Button>
         </View>
       )}
 
-      {location && (
-        <Controller
-          control={control}
-          rules={{
-            required: 'Location is required',
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
+      <Controller
+        control={control}
+        rules={{
+          required: 'Location is required',
+        }}
+        render={({ field: { onChange, onBlur, value } }) =>
+          location ? (
             <TextInput
               placeholder="Location"
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
-              style={styles.input}
+              disabled
             />
-          )}
-          name="location"
-        />
-      )}
+          ) : (
+            <></>
+          )
+        }
+        name="location"
+      />
 
       {errors.location && <Text style={styles.errorText}>{errors.location.message}</Text>}
 
@@ -85,13 +86,6 @@ const LocationScanner = ({ control, setValue, errors, location }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  input: {
-    borderWidth: 2,
-    borderColor: '#333',
-    borderRadius: 8,
-    padding: 10,
-    marginTop: 10,
-  },
   permissionView: {
     display: 'flex',
     gap: 6,
@@ -99,7 +93,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 999,
@@ -129,7 +123,6 @@ const styles = StyleSheet.create({
     top: 20,
     right: 20,
   },
-
   errorText: {
     color: 'red',
     marginTop: 4,
