@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native';
 
 const SafeAreaScrollableView = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -16,7 +16,6 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
-    paddingHorizontal: 8,
   },
 });
 

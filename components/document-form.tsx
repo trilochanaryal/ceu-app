@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import { Text, View, StyleSheet, Button, TextInput, TouchableOpacity } from 'react-native';
-import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useForm, Controller } from 'react-hook-form';
+import LocationScanner from './location-scanner';
 
-type FormData = {
+export type DocumentFormData = {
   location: string;
   noOfEmployee: string;
   company: string;
@@ -26,73 +25,13 @@ const DocumentForm = () => {
 
   const location = watch('location');
 
-  const onSubmit = (data: FormData) => console.log(data);
-
-  const [permission, requestPermission] = useCameraPermissions();
-  const [cameraVisible, setCameraVisible] = useState(false);
-  const isPermissionGranted = Boolean(permission?.granted);
-
-  if (!permission) {
-    // Camera permissions are still loading.
-    return <View />;
-  }
+  const onSubmit = (data: DocumentFormData) => console.log(data);
 
   return (
     <View style={styles.container}>
       <Text>Document Form</Text>
 
-      {isPermissionGranted && !location && (
-        <Button title="Get Location" onPress={() => setCameraVisible(true)} />
-      )}
-
-      {isPermissionGranted && location && (
-        <Button title="Change Location" onPress={() => setCameraVisible(true)} />
-      )}
-
-      {/* Request permission if not granted */}
-      {!isPermissionGranted && (
-        <View style={styles.permissionView}>
-          <Text>Camera permission is required</Text>
-          <Button title="Grant Permission" onPress={requestPermission} />
-        </View>
-      )}
-
-      {location && (
-        <Controller
-          control={control}
-          rules={{
-            required: 'Location is required',
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="Location"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-            />
-          )}
-          name="location"
-        />
-      )}
-      {errors.location && <Text style={styles.errorText}>{errors.location.message}</Text>}
-
-      {cameraVisible && (
-        <View style={styles.overlay}>
-          <CameraView
-            style={styles.camera}
-            facing="back"
-            onBarcodeScanned={({ data }) => {
-              setValue('location', data); // Directly update the form field
-              setCameraVisible(false); // Close camera view
-            }}>
-            <View style={styles.scannerOverlay}>
-              <View style={styles.scanner} />
-            </View>
-            <Button title="Close" onPress={() => setCameraVisible(false)} />
-          </CameraView>
-        </View>
-      )}
+      <LocationScanner control={control} setValue={setValue} errors={errors} location={location} />
 
       <Controller
         control={control}
@@ -150,33 +89,6 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 6,
     padding: 16,
-  },
-  permissionView: {
-    display: 'flex',
-    gap: 6,
-    marginTop: 6,
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  camera: {
-    flex: 1,
-    width: '100%',
-  },
-  scannerOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  scanner: {
-    width: 200,
-    height: 200,
-    borderWidth: 4,
-    borderColor: '#00FF00',
-    borderRadius: 8,
   },
   input: {
     borderWidth: 2,
