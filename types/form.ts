@@ -1,9 +1,8 @@
-//TODO: change type
 export type DocumentFormData = {
   location: string;
   noOfEmployee: string;
   company: string;
-  reportingDate: string;
+  reportingDate: Date | undefined;
   dailyWorkingHours: string;
   noOfMaleWorkers: string;
   totalWorkers: string;

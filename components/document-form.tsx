@@ -1,8 +1,11 @@
 import { View, StyleSheet } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { RadioButton, TextInput, Button, Text } from 'react-native-paper';
+import { DatePickerInput } from 'react-native-paper-dates';
 import LocationScanner from './location-scanner';
 import type { DocumentFormData } from '../types/form';
+import { enGB, registerTranslation } from 'react-native-paper-dates';
+registerTranslation('en-GB', enGB);
 
 const DocumentForm = () => {
   const {
@@ -11,12 +14,12 @@ const DocumentForm = () => {
     setValue,
     watch,
     formState: { errors },
-  } = useForm({
+  } = useForm<DocumentFormData>({
     defaultValues: {
       location: '',
       noOfEmployee: '',
       company: '',
-      reportingDate: '',
+      reportingDate: undefined,
       dailyWorkingHours: '',
       noOfMaleWorkers: '',
       totalWorkers: '',
@@ -32,7 +35,12 @@ const DocumentForm = () => {
     <View style={styles.container}>
       <Text variant="titleLarge">Document Form</Text>
 
-      <LocationScanner control={control} setValue={setValue} errors={errors} location={location} />
+      <LocationScanner
+        control={control}
+        setValue={setValue}
+        errors={errors}
+        location={location as string}
+      />
 
       <Controller
         control={control}
@@ -90,12 +98,16 @@ const DocumentForm = () => {
           required: 'Reporting date is required',
         }}
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            onBlur={onBlur}
-            onChangeText={onChange}
-            placeholder="Reporting Date"
-            value={value}
-          />
+          <View>
+            <DatePickerInput
+              locale="en"
+              label="Reporting Date"
+              onBlur={onBlur}
+              value={value}
+              onChange={onChange}
+              inputMode="start"
+            />
+          </View>
         )}
         name="reportingDate"
       />
