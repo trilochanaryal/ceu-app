@@ -1,11 +1,32 @@
 import { useState } from 'react';
 import { Text, View, StyleSheet, Button, TextInput, TouchableOpacity } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { useForm, Controller } from 'react-hook-form';
+
+type FormData = {
+  location: string;
+  noOfEmployee: string;
+  company: string;
+};
 
 const DocumentForm = () => {
-  const [text, setText] = useState('');
-  const [noOfEmployee, setNoOfEmployee] = useState('');
-  const [company, setCompany] = useState('UNOPS');
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      location: '',
+      noOfEmployee: '',
+      company: '',
+    },
+  });
+
+  const location = watch('location');
+
+  const onSubmit = (data: FormData) => console.log(data);
 
   const [permission, requestPermission] = useCameraPermissions();
   const [cameraVisible, setCameraVisible] = useState(false);
@@ -20,22 +41,41 @@ const DocumentForm = () => {
     <View style={styles.container}>
       <Text>Document Form</Text>
 
-      {isPermissionGranted && (
-        <Button title=" Get Location" onPress={() => setCameraVisible(true)} />
+      {isPermissionGranted && !location && (
+        <Button title="Get Location" onPress={() => setCameraVisible(true)} />
       )}
 
-      {isPermissionGranted && text && (
-        <Button title=" Change Location" onPress={() => setCameraVisible(true)} />
+      {isPermissionGranted && location && (
+        <Button title="Change Location" onPress={() => setCameraVisible(true)} />
       )}
 
+      {/* Request permission if not granted */}
       {!isPermissionGranted && (
         <View style={styles.permissionView}>
-          <Text>Camera permission is required </Text>
+          <Text>Camera permission is required</Text>
           <Button title="Grant Permission" onPress={requestPermission} />
         </View>
       )}
 
-      {text && <TextInput value={text} style={styles.input} />}
+      {location && (
+        <Controller
+          control={control}
+          rules={{
+            required: 'Location is required',
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Location"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              style={styles.input}
+            />
+          )}
+          name="location"
+        />
+      )}
+      {errors.location && <Text style={styles.errorText}>{errors.location.message}</Text>}
 
       {cameraVisible && (
         <View style={styles.overlay}>
@@ -43,8 +83,8 @@ const DocumentForm = () => {
             style={styles.camera}
             facing="back"
             onBarcodeScanned={({ data }) => {
-              setText(data);
-              setCameraVisible(false);
+              setValue('location', data); // Directly update the form field
+              setCameraVisible(false); // Close camera view
             }}>
             <View style={styles.scannerOverlay}>
               <View style={styles.scanner} />
@@ -54,28 +94,52 @@ const DocumentForm = () => {
         </View>
       )}
 
-      <TextInput
-        onChangeText={setNoOfEmployee}
-        placeholder="Number of employee in site"
-        value={noOfEmployee}
-        keyboardType="numeric"
-        style={styles.input}
+      <Controller
+        control={control}
+        rules={{
+          required: 'Number of employees is required',
+          pattern: {
+            value: /^[0-9]*$/,
+            message: 'Only numbers are allowed',
+          },
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            onBlur={onBlur}
+            onChangeText={onChange}
+            placeholder="Number of employees on site"
+            value={value}
+            keyboardType="numeric"
+            style={styles.input}
+          />
+        )}
+        name="noOfEmployee"
       />
+      {errors.noOfEmployee && <Text style={styles.errorText}>{errors.noOfEmployee.message}</Text>}
 
-      {/* Radio Group for UNOPS or Contractor */}
       <View style={styles.radioGroup}>
         <Text>Select Company</Text>
-        <TouchableOpacity
-          style={[styles.radioItem, company === 'UNOPS' && styles.selectedRadio]}
-          onPress={() => setCompany('UNOPS')}>
-          <Text>UNOPS</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.radioItem, company === 'Contractor' && styles.selectedRadio]}
-          onPress={() => setCompany('Contractor')}>
-          <Text>Contractor</Text>
-        </TouchableOpacity>
+        <Controller
+          control={control}
+          name="company"
+          render={({ field: { value, onChange } }) => (
+            <>
+              <TouchableOpacity
+                style={[styles.radioItem, value === 'UNOPS' && styles.selectedRadio]}
+                onPress={() => onChange('UNOPS')}>
+                <Text>UNOPS</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.radioItem, value === 'Contractor' && styles.selectedRadio]}
+                onPress={() => onChange('Contractor')}>
+                <Text>Contractor</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        />
       </View>
+
+      <Button title="Submit" onPress={handleSubmit(onSubmit)} />
     </View>
   );
 };
@@ -85,8 +149,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     flex: 1,
     gap: 6,
+    padding: 16,
   },
-
   permissionView: {
     display: 'flex',
     gap: 6,
@@ -114,15 +178,12 @@ const styles = StyleSheet.create({
     borderColor: '#00FF00',
     borderRadius: 8,
   },
-  permissionContainer: {
-    marginTop: 20,
-    alignItems: 'center',
-  },
   input: {
     borderWidth: 2,
     borderColor: '#333',
     borderRadius: 8,
     padding: 10,
+    marginTop: 10,
   },
   radioGroup: {
     marginTop: 10,
@@ -135,6 +196,10 @@ const styles = StyleSheet.create({
   selectedRadio: {
     backgroundColor: '#ddd', // Highlight selected option
     borderRadius: 4,
+  },
+  errorText: {
+    color: 'red',
+    marginTop: 4,
   },
 });
 
