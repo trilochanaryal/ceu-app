@@ -8,3 +8,8 @@ export type DocumentFormData = {
   totalWorkers: string;
   observation: string;
 };
+
+export type LoginFormData = {
+  email: string;
+  password: string;
+};

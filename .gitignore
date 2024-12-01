@@ -22,3 +22,6 @@ expo-env.d.ts
 #pre build folders
 android
 ios
+
+#env
+.env

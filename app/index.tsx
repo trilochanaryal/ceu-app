@@ -1,7 +1,7 @@
 import { Redirect } from 'expo-router';
 
 function Home() {
-  const isLoggedIn = true;
+  const isLoggedIn = false;
 
   if (isLoggedIn) {
     return <Redirect href="/lists" />;
