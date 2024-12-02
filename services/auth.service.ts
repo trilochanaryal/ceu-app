@@ -9,10 +9,19 @@ export const signIn = async ({ email, password }: { email: string; password: str
   return response.data;
 };
 
-export const signUp = async ({ email, password }: { email: string; password: string }) => {
-  const response = await api.post('auth/signin', {
+export const signUp = async ({
+  email,
+  password,
+  role,
+}: {
+  email: string;
+  password?: string;
+  role: string;
+}) => {
+  const response = await api.post('auth/signup', {
     email,
     password,
+    role,
   });
 
   return response.data;

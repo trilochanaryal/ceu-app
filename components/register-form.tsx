@@ -1,28 +1,54 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { TextInput, Button, Text } from 'react-native-paper';
-
-import type { LoginFormData } from '../types/form';
+import { useMutation } from '@tanstack/react-query';
+import type { RegisterFormData } from '../types/form';
 import { Link } from 'expo-router';
 import { COLORS } from '@/constants/colors';
+import { signUp } from '@/services/auth.service';
 
-const LoginForm = () => {
+const RegisterForm = () => {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm<LoginFormData>({
+  } = useForm<RegisterFormData>({
     defaultValues: {
       email: '',
       password: '',
+      role: 'User',
     },
   });
 
-  const onSubmit = (data: LoginFormData) => console.log(data);
+  const { mutateAsync } = useMutation({
+    mutationKey: ['register-user'],
+    mutationFn: signUp,
+  });
+
+  const onSubmit = (data: RegisterFormData) => {
+    mutateAsync(
+      {
+        email: data.email,
+        password: data.password,
+        role: data.role,
+      },
+      {
+        onSuccess: () => {
+          Alert.alert('Registration Successful!');
+        },
+        onError: (err) => {
+          console.log('Could not register', err.name, err.message);
+          Alert.alert('Error while registering please try later!');
+        },
+      }
+    );
+    reset();
+  };
 
   return (
     <View style={styles.container}>
-      <Text variant="titleLarge">Login Form</Text>
+      <Text variant="titleLarge">Register Form</Text>
 
       <Controller
         control={control}
@@ -66,13 +92,13 @@ const LoginForm = () => {
       {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
 
       <View style={styles.info}>
-        <Text>Don't have an account?</Text>
-        <Link style={styles.infoLink} href="/(auth)/sign-up">
-          Sign up
+        <Text>Already have an account?</Text>
+        <Link style={styles.infoLink} href="/(auth)/sign-in">
+          Sign in
         </Link>
       </View>
 
-      <Button onPress={handleSubmit(onSubmit)}>Login</Button>
+      <Button onPress={handleSubmit(onSubmit)}>Register</Button>
     </View>
   );
 };
@@ -103,4 +129,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginForm;
+export default RegisterForm;
