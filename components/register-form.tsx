@@ -3,7 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { TextInput, Button, Text } from 'react-native-paper';
 import { useMutation } from '@tanstack/react-query';
 import type { RegisterFormData } from '../types/form';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { COLORS } from '@/constants/colors';
 import { signUp } from '@/services/auth.service';
 
@@ -21,7 +21,8 @@ const RegisterForm = () => {
     },
   });
 
-  const { mutateAsync } = useMutation({
+  const router = useRouter();
+  const { mutateAsync, isPending } = useMutation({
     mutationKey: ['register-user'],
     mutationFn: signUp,
   });
@@ -36,6 +37,7 @@ const RegisterForm = () => {
       {
         onSuccess: () => {
           Alert.alert('Registration Successful!');
+          router.push('/(auth)/sign-in');
         },
         onError: (err) => {
           console.log('Could not register', err.name, err.message);
@@ -98,7 +100,9 @@ const RegisterForm = () => {
         </Link>
       </View>
 
-      <Button onPress={handleSubmit(onSubmit)}>Register</Button>
+      <Button disabled={isPending} onPress={handleSubmit(onSubmit)}>
+        Register
+      </Button>
     </View>
   );
 };

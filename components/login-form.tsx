@@ -5,11 +5,14 @@ import { TextInput, Button, Text } from 'react-native-paper';
 import type { LoginFormData } from '../types/form';
 import { Link } from 'expo-router';
 import { COLORS } from '@/constants/colors';
+import { useMutation } from '@tanstack/react-query';
+import { signIn } from '@/services/auth.service';
 
 const LoginForm = () => {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<LoginFormData>({
     defaultValues: {
@@ -18,11 +21,34 @@ const LoginForm = () => {
     },
   });
 
-  const onSubmit = (data: LoginFormData) => console.log(data);
+  const { mutateAsync, error, isError, isPending } = useMutation({
+    mutationKey: ['login-user'],
+    mutationFn: signIn,
+  });
+
+  const onSubmit = (data: LoginFormData) => {
+    mutateAsync(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess: (data) => {
+          console.log('login', data);
+        },
+        onError: (err) => {
+          console.log('Could not login', err.message);
+        },
+      }
+    );
+    reset();
+  };
 
   return (
     <View style={styles.container}>
       <Text variant="titleLarge">Login Form</Text>
+
+      {isError && <Text style={styles.errorText}>{error.message}</Text>}
 
       <Controller
         control={control}
@@ -72,7 +98,9 @@ const LoginForm = () => {
         </Link>
       </View>
 
-      <Button onPress={handleSubmit(onSubmit)}>Login</Button>
+      <Button disabled={isPending} onPress={handleSubmit(onSubmit)}>
+        Login
+      </Button>
     </View>
   );
 };
