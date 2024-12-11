@@ -41,8 +41,14 @@
           "microphonePermission": "Allow ceu-app to access your microphone",
           "recordAudioAndroid": true
         }
-      ]
-    ],
+      ],
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true
+        }
+    ]
+  ],
     "experiments": {
       "typedRoutes": true
     }
