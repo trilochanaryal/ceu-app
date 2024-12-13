@@ -1,15 +1,28 @@
-import { useAuth } from '@/context/AuthContext';
-import { Redirect } from 'expo-router';
-import React from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'expo-router';
+
+import { useAuth } from '@/context/auth-context';
 
 const Home = () => {
   const { authState } = useAuth();
+  const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
 
-  if (authState?.authenticated) {
-    return <Redirect href="/(tabs)/lists" />;
-  } else {
-    return <Redirect href="/(auth)/sign-in" />;
-  }
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
+    if (authState.authenticated) {
+      router.push('/lists');
+    } else {
+      router.push('/(auth)/sign-in');
+    }
+  }, [authState.authenticated, isMounted, router]);
+
+  return null;
 };
 
 export default Home;

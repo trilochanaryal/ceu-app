@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { secureStore } from '@/helper/secure.storage.helper';
-import { API_URL } from '@/constants';
+import { ACCESS_TOKEN_KEY, API_URL, REFRESH_TOKEN_KEY } from '@/constants';
 
 // Create Axios instance
 const api = axios.create({
@@ -19,7 +19,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      const refreshToken = await secureStore.getItem('refreshToken');
+      const refreshToken = await secureStore.getItem(REFRESH_TOKEN_KEY);
       if (!refreshToken) {
         return Promise.reject(error);
       }
@@ -28,9 +28,9 @@ api.interceptors.response.use(
         const { data } = await api.post(`${API_URL}/auth/refresh_token`, { refreshToken });
         const newAccessToken = data.accessToken;
 
-        await secureStore.setItem('accessToken', newAccessToken);
-        api.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
-        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        await secureStore.setItem(ACCESS_TOKEN_KEY, newAccessToken);
+        api.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
         return api(originalRequest); // Retry the original request
       } catch (refreshError) {

@@ -18,6 +18,7 @@ const RegisterForm = () => {
       email: '',
       password: '',
       role: 'User',
+      provider: 'Local',
     },
   });
 

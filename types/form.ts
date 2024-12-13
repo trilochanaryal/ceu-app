@@ -21,3 +21,13 @@ export type RegisterFormData = {
   providerId?: string;
   provider?: 'Local' | 'Google';
 };
+
+export interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface ErrorResponse {
+  error: true;
+  msg: string;
+}
